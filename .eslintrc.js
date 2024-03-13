@@ -24,5 +24,3 @@ module.exports = {
     'prettier/prettier': 0
   },
 };
-
-//DATABASE_URL="postgresql://postgres:admin@localhost:5432/desafio?schema=public"

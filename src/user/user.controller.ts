@@ -21,6 +21,11 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
+  @Get(':email')
+  findOneByEmail(@Param('email') id: string) {
+    return this.userService.findOne(+id);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() data: any) {
     return this.userService.update(+id, data);
