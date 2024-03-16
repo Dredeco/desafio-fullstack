@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { User } from "src/user/user.model";
 
 export class Task implements Prisma.TaskCreateInput{
     id: number;
@@ -6,6 +7,6 @@ export class Task implements Prisma.TaskCreateInput{
     description: string;
     createdAt: Date;
     status: boolean;
-    user?: Prisma.UserCreateNestedOneWithoutTasksInput;
+    user?: User;
     userId: number;
 }

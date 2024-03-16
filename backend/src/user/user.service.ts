@@ -18,11 +18,11 @@ export class UserService {
         return await this.prisma.user.findUnique({ where: { email } });
     }
 
-    async create(data: any) {
+    async create(data: User) {
         return await this.prisma.user.create({ data });
     }
 
-    async update(id: number, data: any) {
+    async update(id: number, data: User) {
         return await this.prisma.user.update({ where: { id }, data });
     }
 

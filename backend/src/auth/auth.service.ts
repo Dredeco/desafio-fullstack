@@ -13,11 +13,14 @@ export class AuthService {
 
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.userService.findOneByEmail(email);
-        if (user && user.password === password) {
-        const { password, ...result } = user;
-        return result;
+        if (!user) {
+            throw new Error('Usuário não cadastrado.');
         }
-        throw new Error;
+        if (user.password === password) {
+            const { password, ...result } = user;
+            return result;
+        }
+        throw new Error('Senha incorreta.');
     }
 
     async login(user: any) {

@@ -12,7 +12,7 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() data: any) {
+  create(@Body() data: User) {
     return this.userService.create(data);
   }
 

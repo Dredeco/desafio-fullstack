@@ -5,16 +5,14 @@
               <div class="column q-pa-md" style="width: 400px">
                 <div class="row q-mb-md">
                   <q-btn color="primary" label="Login" @click="showLogin = true, showRegister = false" />
-                  <q-btn color="primary" label="Register" @click="showRegister = true" class="q-ml-sm" />
+                  <q-btn color="primary" label="Cadastro" @click="showRegister = true; showLogin = false" class="q-ml-sm" />
                 </div>
                 <q-form @submit.prevent="onSubmit" class="q-gutter-md">
-                  <q-input v-if="showLogin" label="Email" v-model="form.email" type="email" required />
-                  <q-input v-if="showRegister" label="Name" v-model="form.name" required />
-                  <q-input v-if="showLogin || showRegister" label="Password" v-model="form.password" type="password" required />
-                  <q-input v-if="showRegister" label="Confirm Password" v-model="form.confirmPassword" type="password" required />
-                  <div class="row">
-                    <q-space />
-                    <q-btn type="submit" color="primary" label="Submit" />
+                  <q-input label="Email" v-model="form.email" type="email" required />
+                  <q-input v-if="showLogin || showRegister" label="Senha" v-model="form.password" type="password" required />
+                  <q-input v-if="showRegister" label="Confirme a senha" v-model="form.confirmPassword" type="password" required />
+                  <div class="flex flex-center q-mt-xl">
+                    <q-btn type="submit" color="primary" label="Entrar" class="" />
                   </div>
                 </q-form>
               </div>
@@ -24,35 +22,65 @@
   </template>
   
   <script>
+  import { apiClient, authClient } from '../store/users';
+  
   export default {
     data() {
       return {
         showLogin: true,
         showRegister: false,
         form: {
-  email: '',
-          name: '',
+          email: '',
           password: '',
           confirmPassword: '',
-          rememberMe: false
-        }
-      }
+          tasks: [],
+        },
+        error: null,
+      };
     },
     methods: {
-      onSubmit() {
+      async onSubmit() {
         if (this.showLogin) {
-          // Handle login form submission
+          try {
+            const response = await authClient.post('/login', {
+              email: this.form.email,
+              password: this.form.password,
+            });
+  
+            // Save the token in local storage or a Vuex store
+            localStorage.setItem('token', response.data.token);
+  
+            // Navigate to the /tasks route
+            this.$router.push('/tasks');
+          } catch (error) {
+            alert(error.response.data.message)
+          }
         } else {
           // Handle registration form submission
+          if (this.form.password !== this.form.confirmPassword) {
+            this.error = 'As senhas não são iguais.';
+            alert(this.error)
+          } else {
+            try {
+              await apiClient.post('/user', (this.form.email, this.form.password, this.form.tasks));
+              this.showLogin = false;
+              this.form.email = '';
+              this.form.password = '';
+              this.form.confirmPassword = '';
+            } catch (error) {
+              this.error = 'Error creating user';
+              alert(this.error)
+            }
+          }
         }
-      }
-    }
-  }
+      },
+    },
+  };
   </script>
   
 <style scoped>
 .q-page {
-  background-color: #f5f5f5;
+  background-color: #a2aaee;
 }
 
 .q-form {
