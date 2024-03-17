@@ -5,5 +5,5 @@ export class User implements Prisma.UserCreateInput{
     id: number;
     email: string;
     password: string;
-    tasks: never[];
+    tasks?: Prisma.TaskCreateNestedManyWithoutUserInput;
 }

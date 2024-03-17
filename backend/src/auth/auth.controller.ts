@@ -17,7 +17,7 @@ import { Response } from 'express';
             if (error.message === 'Usuário não cadastrado.') {
                 return res.status(404).json({ statusCode: 404, message: error.message });
             } else {
-                return res.status(500).json({ statusCode: 500, message: 'Internal server error' });
+                return res.status(404).json({ statusCode: 404, message: error.message });
             }
         }
     }

@@ -33,7 +33,6 @@
           email: '',
           password: '',
           confirmPassword: '',
-          tasks: [],
         },
         error: null,
       };
@@ -62,8 +61,8 @@
             alert(this.error)
           } else {
             try {
-              await apiClient.post('/user', (this.form.email, this.form.password, this.form.tasks));
-              this.showLogin = false;
+              await apiClient.post('/user', {email: this.form.email, password: this.form.password});
+              this.showLogin = true;
               this.form.email = '';
               this.form.password = '';
               this.form.confirmPassword = '';

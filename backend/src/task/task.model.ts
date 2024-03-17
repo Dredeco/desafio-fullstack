@@ -7,6 +7,6 @@ export class Task implements Prisma.TaskCreateInput{
     description: string;
     createdAt: Date;
     status: boolean;
-    user?: User;
+    user?: Prisma.UserCreateNestedOneWithoutTasksInput;
     userId: number;
 }
