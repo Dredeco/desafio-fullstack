@@ -3,9 +3,9 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>Task List</q-toolbar-title>
+        <q-btn color="secondary" @click="logout">Sair</q-btn>
       </q-toolbar>
     </q-header>
-
     <q-page-container>
       <q-page class="flex flex-center">
         <div class="q-pa-md">
@@ -58,59 +58,90 @@ import { ref } from 'vue';
 import tasksStore from '../store/tasks';
 
 export default {
-  setup() {
-    const tasks = ref([]);
-    const newTask = ref({ title: '', description: '', createdAt: new Date(), status: false, userId: null });
-    const editedTask = ref(null);
-
-    const loadTasks = async () => {
-      tasks.value = await tasksStore.getTasks();
+  data() {
+    return {
+      tasks: [],
+      newTask: { title: '', description: '', createdAt: new Date(), status: false, userId: null },
+      editedTask: null,
     };
-
-    const addTask = async () => {
-      if (newTask.value.title.trim()) {
-        const task = await tasksStore.addTask(newTask.value);
-        tasks.value.push(task);
-        newTask.value = { title: '', description: '', createdAt: new Date(), status: false, userId: null };
+  },
+  methods: {
+    async addTask() {
+      const userId = this.getUserId();
+      if (userId) {
+        if (this.newTask.title.trim()) {
+          this.newTask.userId = userId;
+          const task = await tasksStore.addTask(this.newTask);
+          this.tasks.push(task);
+          this.newTask = { title: '', description: '', createdAt: new Date(), status: false, userId: null };
+        }
+      } else {
+        console.error("userId inválido.");
       }
-    };
-
-    const enableEdit = (task) => {
+    },
+    enableEdit(task) {
       task.editing = true;
-      // Focar no campo de título editável ao clicar no botão de edição
       this.$nextTick(() => {
         this.$refs.editedTitleInput[task.id].focus();
       });
-    };
-
-    const saveTask = async (task) => {
-      if (task.title.trim()) {
-        await tasksStore.editTask(task.id, { title: task.title, description: task.description, status: task.status });
-        task.editing = false;
+    },
+    async saveTask(task) {
+      const userId = this.getUserId();
+      if (userId) {
+        if (task.title.trim()) {
+          await tasksStore.editTask(task.id, { title: task.title, description: task.description, status: task.status });
+          task.editing = false;
+        }
+      } else {
+        console.error("userId inválido.");
       }
-    };
-
-    const updateTask = async (task) => {
-      await tasksStore.editTask(task.id, { status: task.status });
-    };
-
-    const deleteTask = async (id) => {
-      await tasksStore.deleteTask(id);
-      tasks.value = tasks.value.filter((task) => task.id !== id);
-    };
-
-    loadTasks();
-
-    return {
-      tasks,
-      newTask,
-      editedTask,
-      addTask,
-      enableEdit,
-      saveTask,
-      updateTask,
-      deleteTask,
-    };
+    },
+    async updateTask(task) {
+      const userId = this.getUserId();
+      if (userId) {
+        await tasksStore.editTask(task.id, { status: task.status });
+      } else {
+        console.error("userId inválido.");
+      }
+    },
+    async deleteTask(id) {
+      const userId = this.getUserId();
+      if (userId) {
+        await tasksStore.deleteTask(id);
+        this.tasks = this.tasks.filter((task) => task.id !== id);
+      } else {
+        console.error("userId inválido.");
+      }
+    },
+    async loadTasks() {
+      const userId = this.getUserId();
+      if (userId) {
+        console.log("user id:", userId)
+        const tasksData = await tasksStore.getTasks();
+        this.tasks = tasksData.filter(task => task.userId === userId);
+      } else {
+        console.error("userId inválido.");
+      }
+    },
+    logout() {
+      localStorage.setItem('userId', '0');
+      this.$router.push('/');
+    },
+    getUserId() {
+      if (typeof localStorage !== 'undefined') {
+        const userId = Number(localStorage.getItem('userId'));
+        if (isNaN(userId) || userId <= 0) {
+          this.$router.push('/');
+        }
+        return userId;
+      } else {
+        console.error("localStorage not supported in this environment.");
+        this.$router.push('/');
+      }
+    },
+  },
+  created() {
+    this.loadTasks();
   },
 };
 </script>

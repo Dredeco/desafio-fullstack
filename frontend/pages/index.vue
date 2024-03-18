@@ -47,7 +47,7 @@
             });
   
             // Save the token in local storage or a Vuex store
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.id);
   
             // Navigate to the /tasks route
             this.$router.push('/tasks');
@@ -66,6 +66,7 @@
               this.form.email = '';
               this.form.password = '';
               this.form.confirmPassword = '';
+              alert("Usuário cadastrado com sucesso.")
             } catch (error) {
               this.error = 'Error creating user';
               alert(this.error)
