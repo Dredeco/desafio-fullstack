@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { User } from "src/user/user.model";
 
 export class Task implements Prisma.TaskCreateInput{
     id: number;
