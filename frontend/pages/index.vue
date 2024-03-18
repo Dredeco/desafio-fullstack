@@ -6,8 +6,10 @@
               <div class="row q-mb-md">
                 <q-btn color="primary" label="Login" @click="showLogin = true, showRegister = false" />
                 <q-btn color="primary" label="Cadastro" @click="showRegister = true; showLogin = false" class="q-ml-sm" />
-              </div>
+              </div >
               <q-form @submit.prevent="onSubmit" class="q-gutter-md bg-white rounded-borders q-px-lg q-py-md flex flex-center column">
+                <h5 v-if="showLogin">Login</h5>
+                <h5 v-if="showRegister">Cadastro</h5>
                 <q-input label="E-mail" v-model="form.email" type="email" required class="full-width"/>
                 <q-input v-if="showLogin || showRegister" label="Senha" v-model="form.password" type="password" required class="full-width"/>
                 <q-input v-if="showRegister" label="Confirme a senha" v-model="form.confirmPassword" type="password" required class="full-width"/>
@@ -75,3 +77,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+h5 {
+  margin: 2rem 0;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 0;
+}
+</style>
